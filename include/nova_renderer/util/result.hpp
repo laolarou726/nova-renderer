@@ -4,8 +4,6 @@
 #include <memory>
 #include <string>
 
-#include <fmt/format.h>
-
 #include "utils.hpp"
 
 namespace nova::renderer {

@@ -59,6 +59,12 @@ namespace nova::renderer {
 
 #define FORMAT(s, ...) fmt::format(fmt(s), __VA_ARGS__)
 
+#ifdef SWIG
+%define NOVA_EXCEPTION(name)
+class name : public ::nova::renderer::nova_exception {
+};
+%enddefine
+#else
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define NOVA_EXCEPTION(name)                                                                                                               \
     /* NOLINTNEXTLINE(bugprone-macro-parentheses)*/                                                                                        \
@@ -70,6 +76,8 @@ namespace nova::renderer {
         explicit name(const std::exception& cause) : ::nova::renderer::nova_exception(cause){};                                            \
         name(const std::string& msg, const std::exception& cause) : ::nova::renderer::nova_exception(msg, cause){};                        \
     }
+
+#endif
 
     NOVA_EXCEPTION(out_of_gpu_memory);
 } // namespace nova::renderer

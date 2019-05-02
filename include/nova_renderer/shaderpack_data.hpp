@@ -12,7 +12,6 @@
 #include <vector>
 
 #include <glm/glm.hpp>
-#include <nlohmann/json.hpp>
 
 #include "nova_renderer/util/filesystem.hpp"
 #include "nova_renderer/util/utils.hpp"

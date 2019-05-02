@@ -316,8 +316,12 @@ if(NOT CXX_STD_FILESYSTEM)
         message(FATAL_ERROR "Failed to find a filesystem header for C++")
     endif()
     target_compile_definitions(nova-renderer PUBLIC NOVA_STD_FILESYSTEM_EXPERIMENTAL=1)
+    set(NOVA_STD_FILESYSTEM_EXPERIMENTAL True)
+    set(NOVA_STD_FILESYSTEM False)
 else()
     target_compile_definitions(nova-renderer PUBLIC NOVA_STD_FILESYSTEM=1)
+    set(NOVA_STD_FILESYSTEM_EXPERIMENTAL False)
+    set(NOVA_STD_FILESYSTEM True)
 endif()
 
 ############################
@@ -358,6 +362,11 @@ target_link_libraries(nova-renderer PUBLIC ${COMMON_LINK_LIBS})
 # Fix issue with permissive #
 #############################
 remove_permissive(nova-renderer)
+
+##################################
+# swig aka generate wrapper code #
+##################################
+add_subdirectory(swig)
 
 ##########################
 # Add tests if requested #

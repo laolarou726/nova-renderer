@@ -48,7 +48,7 @@ namespace nova::renderer {
 
         nova_settings& get_settings();
 
-        [[nodiscard]] render_engine* get_engine() const;
+        render_engine* get_engine() const;
 
         static nova_renderer* initialize(const nova_settings& settings);
 
