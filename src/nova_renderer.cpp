@@ -80,21 +80,21 @@ namespace nova::renderer {
         mtr_flush();
     }
 
-    bool nova_renderer::load_shaderpack(const std::string& shaderpack_name) const {
+    result<void> nova_renderer::load_shaderpack(const std::string& shaderpack_name) const {
         MTR_SCOPE("ShaderpackLoading", "load_shaderpack");
         if(!glslang::InitializeProcess()) {
-            return false;
+            return "Failed to initialize GLSLang process!"_err;
         }
 
         auto shaderpack_load_result = load_shaderpack_data(fs::path(shaderpack_name));
         if(!shaderpack_load_result) {
             NOVA_LOG(ERROR) << "Failed to load shaderpack: " << shaderpack_load_result.error.to_string();
-            return false;
+            return shaderpack_load_result.convert<void>("Failed to load shaderpack");
         }
 
         engine->set_shaderpack(shaderpack_load_result.value);
         NOVA_LOG(INFO) << "Shaderpack " << shaderpack_name << " loaded successfully";
-        return true;
+        return result<void>();
     }
 
     render_engine* nova_renderer::get_engine() const { return engine.get(); }

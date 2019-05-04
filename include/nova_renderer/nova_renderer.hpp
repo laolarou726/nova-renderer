@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 
+#include "nova_renderer/util/result.hpp"
+
 #include "nova_settings.hpp"
 #include "render_engine.hpp"
 #include "renderdoc_app.h"
@@ -34,11 +36,11 @@ namespace nova::renderer {
          * shaderpack isn't found there, it'll try to load it from the `resourcepacks/` directory (mimicking Bedrock
          * shaders).
          *
-         * \returns `true` if successfully loaded, `false` otherwise
+         * \returns A void result without error if successful, else with a message
          *
          * \param shaderpack_name The name of the shaderpack to load
          */
-        bool load_shaderpack(const std::string& shaderpack_name) const;
+        result<void> load_shaderpack(const std::string& shaderpack_name) const;
 
         /*!
          * \brief Executes a single frame
