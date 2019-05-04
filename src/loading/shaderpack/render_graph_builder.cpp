@@ -22,7 +22,7 @@ namespace nova::renderer {
      * \param depth The depth in the tree that we're at. If this number ever grows bigger than the total number of
      * passes, there's a circular dependency somewhere in the render graph. This is Bad and we hate it
      */
-    void add_dependent_passes(const std::string& pass_name,
+    result<void> add_dependent_passes(const std::string& pass_name,
                               const std::unordered_map<std::string, render_pass_data>& passes,
                               std::vector<std::string>& ordered_passes,
                               const std::unordered_map<std::string, std::vector<std::string>>& resource_to_write_pass,
@@ -74,7 +74,7 @@ namespace nova::renderer {
         return left || right;
     }
 
-    std::vector<std::string> order_passes(const std::unordered_map<std::string, render_pass_data>& passes) {
+    result<std::vector<std::string>> order_passes(const std::unordered_map<std::string, render_pass_data>& passes) {
         MTR_SCOPE("Renderpass", "order_passes");
 
         NOVA_LOG(DEBUG) << "Executing Pass Scheduler";
@@ -110,14 +110,17 @@ namespace nova::renderer {
         if(resource_to_write_pass.find("Backbuffer") == resource_to_write_pass.end()) {
             NOVA_LOG(ERROR)
                 << "This render graph does not write to the backbuffer. Unable to load this shaderpack because it can't render anything";
-            throw pass_ordering_exception("Failed to order passes because no backbuffer was found");
+            return "Failed to order passes because no backbuffer was found"_err;
         } // This block never returns.
 
         auto backbuffer_writes = resource_to_write_pass["Backbuffer"];
         ordered_passes.insert(ordered_passes.end(), backbuffer_writes.begin(), backbuffer_writes.end());
 
         for(const auto& pass : backbuffer_writes) {
-            add_dependent_passes(pass, passes, ordered_passes, resource_to_write_pass, 1);
+            auto result = add_dependent_passes(pass, passes, ordered_passes, resource_to_write_pass, 1);
+            if(!result) {
+                return result.convert<std::vector<std::string>>();
+            }
         }
 
         std::reverse(ordered_passes.begin(), ordered_passes.end());
@@ -146,14 +149,14 @@ namespace nova::renderer {
         return ordered_passes;
     }
 
-    void add_dependent_passes(const std::string& pass_name,
+    result<void> add_dependent_passes(const std::string& pass_name,
                               const std::unordered_map<std::string, render_pass_data>& passes,
                               std::vector<std::string>& ordered_passes,
                               const std::unordered_map<std::string, std::vector<std::string>>& resource_to_write_pass,
                               const uint32_t depth) {
         if(depth > passes.size()) {
             NOVA_LOG(ERROR) << "Circular render graph detected! Please fix your render graph to not have circular dependencies";
-            throw circular_rendergraph_exception("Render graph has circular dependencies");
+            return "Render graph has circular dependencies"_err;
         }
 
         const auto& pass = passes.at(pass_name);
@@ -190,6 +193,8 @@ namespace nova::renderer {
                 }
             }
         }
+
+        return result<void>();
     }
 
     void determine_usage_order_of_textures(const std::vector<render_pass_data>& passes,

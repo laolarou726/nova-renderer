@@ -177,7 +177,7 @@ namespace nova::renderer {
         }
         data.materials = materials_result.value;
 
-        return result(data);
+        return data;
     }
 
     result<std::shared_ptr<folder_accessor_base>> get_shaderpack_accessor(const fs::path& shaderpack_name) {
@@ -194,7 +194,7 @@ namespace nova::renderer {
             return result<std::shared_ptr<folder_accessor_base>>(std::make_shared<regular_folder_accessor>(path_to_shaderpack));
         }
 
-        return result<std::shared_ptr<folder_accessor_base>>(MAKE_ERROR("Resource {} not found", shaderpack_name.string()));
+        return MAKE_ERROR("Resource {} not found", shaderpack_name.string());
     }
 
     result<shaderpack_resources_data> load_dynamic_resources_file(const std::shared_ptr<folder_accessor_base>& folder_access) {
@@ -213,10 +213,10 @@ namespace nova::renderer {
                 return result<shaderpack_resources_data>("Validation report contained errors"_err);
             }
 
-            return result(json_resources.get<shaderpack_resources_data>());
+            return json_resources.get<shaderpack_resources_data>();
         }
         catch(nlohmann::json::parse_error& err) {
-            return result<shaderpack_resources_data>(MAKE_ERROR("Could not parse your shaderpack's resources.json: {}", err.what()));
+            return MAKE_ERROR("Could not parse your shaderpack's resources.json: {}", err.what());
         }
     }
 
@@ -237,16 +237,20 @@ namespace nova::renderer {
                 passes_by_name[pass.name] = pass;
             }
 
-            const auto ordered_pass_names = order_passes(passes_by_name);
+            auto order_pass_names_result = order_passes(passes_by_name);
+            if(!order_pass_names_result) {
+                return order_pass_names_result.convert<std::vector<render_pass_data>>();
+            }
+            const auto ordered_pass_names = order_pass_names_result.value;
             passes.clear();
             for(const auto& named_pass : ordered_pass_names) {
                 passes.push_back(passes_by_name.at(named_pass));
             }
 
-            return result(passes);
+            return passes;
         }
         catch(nlohmann::json::parse_error& err) {
-            return result<std::vector<render_pass_data>>(MAKE_ERROR("Could not parse shaderpack's passes.json: {}", err.what()));
+            return MAKE_ERROR("Could not parse shaderpack's passes.json: {}", err.what());
         }
     }
 
@@ -277,7 +281,7 @@ namespace nova::renderer {
             }
         }
 
-        return result(output);
+        return output;
     }
 
     result<pipeline_data> load_single_pipeline(const std::shared_ptr<folder_accessor_base>& folder_access, const fs::path& pipeline_path) {
@@ -285,7 +289,7 @@ namespace nova::renderer {
 
         auto pipeline_bytes_result = folder_access->read_text_file(pipeline_path);
         if(!pipeline_bytes_result) {
-            return pipeline_bytes_result.convert<pipeline_data>(FORMAT("Failed to read {:s}", pipeline_path));
+            return pipeline_bytes_result.convert<pipeline_data>(FORMAT("Failed to read {:s}", pipeline_path.string()));
         }
         const auto pipeline_bytes = pipeline_bytes_result.value;
 
@@ -310,7 +314,7 @@ namespace nova::renderer {
                                                 new_pipeline.defines);
 
             if(!load_result) {
-                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {}", pipeline_path));
+                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {:s}", pipeline_path.string()));
             }
 
             new_pipeline.vertex_shader.source = load_result.value;
@@ -323,7 +327,7 @@ namespace nova::renderer {
                                                 new_pipeline.defines);
 
             if(!load_result) {
-                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {}", pipeline_path));
+                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {:s}", pipeline_path.string()));
             }
 
             (*new_pipeline.geometry_shader).source = load_result.value;
@@ -336,7 +340,7 @@ namespace nova::renderer {
                                                 new_pipeline.defines);
 
             if(!load_result) {
-                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {}", pipeline_path));
+                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {:s}", pipeline_path.string()));
             }
 
             (*new_pipeline.tessellation_control_shader).source = load_result.value;
@@ -348,7 +352,7 @@ namespace nova::renderer {
                                                 new_pipeline.defines);
 
             if(!load_result) {
-                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {}", pipeline_path));
+                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {:s}", pipeline_path.string()));
             }
 
             (*new_pipeline.tessellation_evaluation_shader)
@@ -362,7 +366,7 @@ namespace nova::renderer {
                                                 new_pipeline.defines);
 
             if(!load_result) {
-                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {}", pipeline_path));
+                return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {:s}", pipeline_path.string()));
             }
 
             (*new_pipeline.fragment_shader).source = load_result.value;
@@ -370,7 +374,7 @@ namespace nova::renderer {
 
         NOVA_LOG(TRACE) << "Load of pipeline " << pipeline_path << " succeeded";
 
-        return result(new_pipeline);
+        return new_pipeline;
     }
 
     result<std::vector<uint32_t>> load_shader_file(const fs::path& filename,
@@ -481,7 +485,7 @@ namespace nova::renderer {
 
             auto shader_source_result = folder_access->read_text_file(full_filename);
             if(!shader_source_result) {
-                return shader_source_result.convert<std::vector<uint32_t>>(FORMAT("Failed to read {:s}", full_filename));
+                return shader_source_result.convert<std::vector<uint32_t>>(FORMAT("Failed to read {:s}", full_filename.string()));
             }
 
             std::string shader_source = shader_source_result.value;
@@ -532,10 +536,10 @@ namespace nova::renderer {
             dump_filename.replace_extension(std::to_string(stage) + ".spirv.generated");
             write_to_file(spirv, dump_filename);
 
-            return result(spirv);
+            return spirv;
         }
 
-        return result<std::vector<uint32_t>>(MAKE_ERROR("Could not find shader {}", filename.string()));
+        return MAKE_ERROR("Could not find shader {}", filename.string());
     }
 
     result<std::vector<material_data>> load_material_files(const std::shared_ptr<folder_accessor_base>& folder_access) {
@@ -562,13 +566,13 @@ namespace nova::renderer {
             }
         }
 
-        return result(output);
+        return output;
     }
 
     result<material_data> load_single_material(const std::shared_ptr<folder_accessor_base>& folder_access, const fs::path& material_path) {
         auto material_text_result = folder_access->read_text_file(material_path);
         if(!material_text_result) {
-            return material_text_result.convert<material_data>(FORMAT("Failed to read {:s}", material_path));
+            return material_text_result.convert<material_data>(FORMAT("Failed to read {:s}", material_path.string()));
         }
         const std::string material_text = material_text_result.value;
 
@@ -579,12 +583,12 @@ namespace nova::renderer {
             // There were errors, this material can't be loaded
             loading_failed = true;
             NOVA_LOG(TRACE) << "Load of material " << material_path << " failed";
-            return result<material_data>(MAKE_ERROR("Load of material {:s} failed, validation report contained errors", material_path));
+            return MAKE_ERROR("Load of material {:s} failed, validation report contained errors", material_path.string());
         }
 
         auto material = json_material.get<material_data>();
         material.name = material_path.stem().string();
         NOVA_LOG(TRACE) << "Load of material " << material_path << " succeeded";
-        return result(material);
+        return material;
     }
 } // namespace nova::renderer

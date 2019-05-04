@@ -137,7 +137,11 @@ namespace nova::renderer {
             regular_render_passes[pass_data.name] = pass_data;
         }
 
-        render_passes_by_order = order_passes(regular_render_passes);
+        auto render_pass_by_order_result = order_passes(regular_render_passes);
+        if(!render_pass_by_order_result) {
+            NOVA_LOG(FATAL) << "Failed to order render passes: " << render_pass_by_order_result.error.to_string();
+        }
+        render_passes_by_order = render_pass_by_order_result.value;
 
         const VkExtent2D swapchain_extent = swapchain->get_swapchain_extent();
 

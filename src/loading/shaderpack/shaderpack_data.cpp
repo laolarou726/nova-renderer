@@ -31,7 +31,7 @@ namespace nova::renderer {
         return {std::round(pixel_width), std::round(pixel_height)};
     }
 
-    pixel_format_enum pixel_format_enum_from_string(const std::string& str) {
+    result<pixel_format_enum> pixel_format_enum_from_string(const std::string& str) {
         if(str == "RGBA8") {
             return pixel_format_enum::RGBA8;
         }
@@ -49,10 +49,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported pixel format " << str;
-        throw validation_failure_exception("Unsupported pixel format " + str);
+        return MAKE_ERROR("Unsupported pixel format {:s}", str);
     }
 
-    texture_dimension_type_enum texture_dimension_type_enum_from_string(const std::string& str) {
+    result<texture_dimension_type_enum> texture_dimension_type_enum_from_string(const std::string& str) {
         if(str == "ScreenRelative") {
             return texture_dimension_type_enum ::ScreenRelative;
         }
@@ -61,10 +61,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported texture dimension type " << str;
-        throw validation_failure_exception("Unsupported texture dimension type " + str);
+        return MAKE_ERROR("Unsupported texture dimension type {:s}", str);
     }
 
-    texture_filter_enum texture_filter_enum_from_string(const std::string& str) {
+    result<texture_filter_enum> texture_filter_enum_from_string(const std::string& str) {
         if(str == "TexelAA") {
             return texture_filter_enum::TexelAA;
         }
@@ -76,10 +76,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported texture filter " << str;
-        throw validation_failure_exception("Unsupported texture filter " + str);
+        return MAKE_ERROR("Unsupported texture filter {:s}", str);
     }
 
-    wrap_mode_enum wrap_mode_enum_from_string(const std::string& str) {
+    result<wrap_mode_enum> wrap_mode_enum_from_string(const std::string& str) {
         if(str == "Repeat") {
             return wrap_mode_enum::Repeat;
         }
@@ -88,10 +88,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported wrap mode " << str;
-        throw validation_failure_exception("Unsupported wrap mode " + str);
+        return MAKE_ERROR("Unsupported wrap mode {:s}", str);
     }
 
-    stencil_op_enum stencil_op_enum_from_string(const std::string& str) {
+    result<stencil_op_enum> stencil_op_enum_from_string(const std::string& str) {
         if(str == "Keep") {
             return stencil_op_enum::Keep;
         }
@@ -118,10 +118,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported stencil op " << str;
-        throw validation_failure_exception("Unsupported stencil op " + str);
+        return MAKE_ERROR("Unsupported stencil op {:s}", str);
     }
 
-    compare_op_enum compare_op_enum_from_string(const std::string& str) {
+    result<compare_op_enum> compare_op_enum_from_string(const std::string& str) {
         if(str == "Never") {
             return compare_op_enum::Never;
         }
@@ -148,10 +148,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported compare op " << str;
-        throw validation_failure_exception("Unsupported compare op " + str);
+        return MAKE_ERROR("Unsupported compare op {:s}", str);
     }
 
-    msaa_support_enum msaa_support_enum_from_string(const std::string& str) {
+    result<msaa_support_enum> msaa_support_enum_from_string(const std::string& str) {
         if(str == "MSAA") {
             return msaa_support_enum::MSAA;
         }
@@ -163,10 +163,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported antialiasing mode " << str;
-        throw validation_failure_exception("Unsupported antialiasing mode " + str);
+        return MAKE_ERROR("Unsupported antialiasing mode {:s}", str);
     }
 
-    primitive_topology_enum primitive_topology_enum_from_string(const std::string& str) {
+    result<primitive_topology_enum> primitive_topology_enum_from_string(const std::string& str) {
         if(str == "Triangles") {
             return primitive_topology_enum::Triangles;
         }
@@ -175,10 +175,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported primitive mode " << str;
-        throw validation_failure_exception("Unsupported primitive mode " + str);
+        return MAKE_ERROR("Unsupported primitive mode {:s}", str);
     }
 
-    blend_factor_enum blend_factor_enum_from_string(const std::string& str) {
+    result<blend_factor_enum> blend_factor_enum_from_string(const std::string& str) {
         if(str == "One") {
             return blend_factor_enum::One;
         }
@@ -211,10 +211,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported blend factor " << str;
-        throw validation_failure_exception("Unsupported blend factor " + str);
+        return MAKE_ERROR("Unsupported blend factor {:s}", str);
     }
 
-    render_queue_enum render_queue_enum_from_string(const std::string& str) {
+    result<render_queue_enum> render_queue_enum_from_string(const std::string& str) {
         if(str == "Transparent") {
             return render_queue_enum::Transparent;
         }
@@ -226,10 +226,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported render queue " << str;
-        throw validation_failure_exception("Unsupported render queue " + str);
+        return MAKE_ERROR("Unsupported render queue {:s}", str);
     }
 
-    state_enum state_enum_from_string(const std::string& str) {
+    result<state_enum> state_enum_from_string(const std::string& str) {
         if(str == "Blending") {
             return state_enum::Blending;
         }
@@ -262,10 +262,10 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported state enum " << str;
-        throw validation_failure_exception("Unsupported state enum " + str);
+        return MAKE_ERROR("Unsupported state enum {:s}", str);
     }
 
-    vertex_field_enum vertex_field_enum_from_string(const std::string& str) {
+    result<vertex_field_enum> vertex_field_enum_from_string(const std::string& str) {
         if(str == "Position") {
             return vertex_field_enum::Position;
         }
@@ -295,7 +295,7 @@ namespace nova::renderer {
         }
 
         NOVA_LOG(ERROR) << "Unsupported vertex field " << str;
-        throw validation_failure_exception("Unsupported vertex field " + str);
+        return MAKE_ERROR("Unsupported vertex field {:s}", str);
     }
 
     std::string to_string(const pixel_format_enum val) {

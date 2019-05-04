@@ -49,7 +49,12 @@ namespace nova::renderer {
 
     void from_json(const nlohmann::json& j, vertex_field_data& vertex_data) {
         vertex_data.semantic_name = get_json_value<std::string>(j, "name").value();
-        vertex_data.field = get_json_value<vertex_field_enum>(j, "field", vertex_field_enum_from_string).value();
+        auto field_result = get_json_value<vertex_field_enum>(j, "field", vertex_field_enum_from_string);
+        if(!field_result) {
+            // TODO: Somehow handle that
+            NOVA_LOG(ERROR) << "Failed to get 'field' from vertex info: " << field_result.error.to_string();
+        }
+        vertex_data.field = field_result.value;
     }
 
     void from_json(const nlohmann::json& j, pipeline_data& pipeline) {
@@ -57,7 +62,12 @@ namespace nova::renderer {
         pipeline.parent_name = get_json_value<std::string>(j, "parent").value_or("");
         pipeline.pass = get_json_value<std::string>(j, "pass").value();
         pipeline.defines = get_json_array<std::string>(j, "defines");
-        pipeline.states = get_json_array<state_enum>(j, "states", state_enum_from_string);
+        auto states_result =  get_json_array<state_enum>(j, "states", state_enum_from_string);
+        if(!states_result) {
+            // TODO: Somehow handle that
+            NOVA_LOG(ERROR) << "Failed to get 'states' from pipeline info: " << states_result.error.to_string();
+        }
+        pipeline.states = states_result.value;
         pipeline.vertex_fields = get_json_array<vertex_field_data>(j, "vertexFields");
         pipeline.front_face = get_json_value<stencil_op_state>(j, "frontFace");
         pipeline.back_face = get_json_value<stencil_op_state>(j, "backFace");
