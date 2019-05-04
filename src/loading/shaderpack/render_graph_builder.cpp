@@ -23,10 +23,10 @@ namespace nova::renderer {
      * passes, there's a circular dependency somewhere in the render graph. This is Bad and we hate it
      */
     result<void> add_dependent_passes(const std::string& pass_name,
-                              const std::unordered_map<std::string, render_pass_data>& passes,
-                              std::vector<std::string>& ordered_passes,
-                              const std::unordered_map<std::string, std::vector<std::string>>& resource_to_write_pass,
-                              uint32_t depth);
+                                      const std::unordered_map<std::string, render_pass_data>& passes,
+                                      std::vector<std::string>& ordered_passes,
+                                      const std::unordered_map<std::string, std::vector<std::string>>& resource_to_write_pass,
+                                      uint32_t depth);
 
     bool range::has_writer() const { return first_write_pass <= last_write_pass; }
 
@@ -150,10 +150,10 @@ namespace nova::renderer {
     }
 
     result<void> add_dependent_passes(const std::string& pass_name,
-                              const std::unordered_map<std::string, render_pass_data>& passes,
-                              std::vector<std::string>& ordered_passes,
-                              const std::unordered_map<std::string, std::vector<std::string>>& resource_to_write_pass,
-                              const uint32_t depth) {
+                                      const std::unordered_map<std::string, render_pass_data>& passes,
+                                      std::vector<std::string>& ordered_passes,
+                                      const std::unordered_map<std::string, std::vector<std::string>>& resource_to_write_pass,
+                                      const uint32_t depth) {
         if(depth > passes.size()) {
             NOVA_LOG(ERROR) << "Circular render graph detected! Please fix your render graph to not have circular dependencies";
             return "Render graph has circular dependencies"_err;

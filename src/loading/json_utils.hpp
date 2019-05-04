@@ -101,8 +101,8 @@ namespace nova::renderer {
      */
     template <typename ValType>
     result<ValType> get_json_value(const nlohmann::json& json_obj,
-                                          const std::string& key,
-                                          std::function<result<ValType>(const nlohmann::json&)> deserializer) {
+                                   const std::string& key,
+                                   std::function<result<ValType>(const nlohmann::json&)> deserializer) {
         const auto& itr = json_obj.find(key);
         if(itr != json_obj.end()) {
             auto& json_node = json_obj.at(key);
@@ -231,8 +231,8 @@ namespace nova::renderer {
      */
     template <typename ValType>
     result<std::vector<ValType>> get_json_array(const nlohmann::json& json_obj,
-                                        const std::string& key,
-                                        std::function<result<ValType>(const nlohmann::json&)> deserializer) {
+                                                const std::string& key,
+                                                std::function<result<ValType>(const nlohmann::json&)> deserializer) {
         const auto& itr = json_obj.find(key);
         if(itr != json_obj.end()) {
             auto& json_node = json_obj.at(key);

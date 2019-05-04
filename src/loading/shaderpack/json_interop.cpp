@@ -62,7 +62,7 @@ namespace nova::renderer {
         pipeline.parent_name = get_json_value<std::string>(j, "parent").value_or("");
         pipeline.pass = get_json_value<std::string>(j, "pass").value();
         pipeline.defines = get_json_array<std::string>(j, "defines");
-        auto states_result =  get_json_array<state_enum>(j, "states", state_enum_from_string);
+        auto states_result = get_json_array<state_enum>(j, "states", state_enum_from_string);
         if(!states_result) {
             // TODO: Somehow handle that
             NOVA_LOG(ERROR) << "Failed to get 'states' from pipeline info: " << states_result.error.to_string();

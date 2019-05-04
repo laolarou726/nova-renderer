@@ -101,18 +101,15 @@ namespace nova::renderer {
         /* .MaxCombinedClipAndCullDistances = */ 8,
         /* .MaxSamples = */ 4,
         /* .limits = */
-        {
-            /* .nonInductiveForLoops = */ true,
-            /* .whileLoops = */ true,
-            /* .doWhileLoops = */ true,
-            /* .generalUniformIndexing = */ true,
-            /* .generalAttributeMatrixVectorIndexing = */ true,
-            /* .generalVaryingIndexing = */ true,
-            /* .generalSamplerIndexing = */ true,
-            /* .generalVariableIndexing = */ true,
-            /* .generalConstantMatrixVectorIndexing = */ true
-        }
-    };
+        {/* .nonInductiveForLoops = */ true,
+         /* .whileLoops = */ true,
+         /* .doWhileLoops = */ true,
+         /* .generalUniformIndexing = */ true,
+         /* .generalAttributeMatrixVectorIndexing = */ true,
+         /* .generalVaryingIndexing = */ true,
+         /* .generalSamplerIndexing = */ true,
+         /* .generalVariableIndexing = */ true,
+         /* .generalConstantMatrixVectorIndexing = */ true}};
 
     result<std::shared_ptr<folder_accessor_base>> get_shaderpack_accessor(const fs::path& shaderpack_name);
 
@@ -127,9 +124,9 @@ namespace nova::renderer {
     result<material_data> load_single_material(const std::shared_ptr<folder_accessor_base>& folder_access, const fs::path& material_path);
 
     result<std::vector<uint32_t>> load_shader_file(const fs::path& filename,
-                                           const std::shared_ptr<folder_accessor_base>& folder_access,
-                                           EShLanguage stage,
-                                           const std::vector<std::string>& defines);
+                                                   const std::shared_ptr<folder_accessor_base>& folder_access,
+                                                   EShLanguage stage,
+                                                   const std::vector<std::string>& defines);
 
     bool loading_failed = false;
 
@@ -308,10 +305,7 @@ namespace nova::renderer {
         NOVA_LOG(TRACE) << "Parsed JSON into pipeline_data for pipeline " << pipeline_path;
 
         {
-            auto load_result = load_shader_file(new_pipeline.vertex_shader.filename,
-                                                folder_access,
-                                                EShLangVertex,
-                                                new_pipeline.defines);
+            auto load_result = load_shader_file(new_pipeline.vertex_shader.filename, folder_access, EShLangVertex, new_pipeline.defines);
 
             if(!load_result) {
                 return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {:s}", pipeline_path.string()));
@@ -355,8 +349,7 @@ namespace nova::renderer {
                 return load_result.convert<pipeline_data>(FORMAT("Failed to load pipeline {:s}", pipeline_path.string()));
             }
 
-            (*new_pipeline.tessellation_evaluation_shader)
-                .source = load_result.value;
+            (*new_pipeline.tessellation_evaluation_shader).source = load_result.value;
         }
 
         if(new_pipeline.fragment_shader) {
@@ -378,9 +371,9 @@ namespace nova::renderer {
     }
 
     result<std::vector<uint32_t>> load_shader_file(const fs::path& filename,
-                                           const std::shared_ptr<folder_accessor_base>& folder_access,
-                                           const EShLanguage stage,
-                                           const std::vector<std::string>& defines) {
+                                                   const std::shared_ptr<folder_accessor_base>& folder_access,
+                                                   const EShLanguage stage,
+                                                   const std::vector<std::string>& defines) {
         static std::unordered_map<EShLanguage, std::vector<fs::path>> extensions_by_shader_stage = {{EShLangVertex,
                                                                                                      {
                                                                                                          ".vert.spirv",

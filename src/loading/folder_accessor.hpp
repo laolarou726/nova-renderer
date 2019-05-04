@@ -7,8 +7,8 @@
 #include <vector>
 
 #include "nova_renderer/util/filesystem.hpp"
-#include "nova_renderer/util/utils.hpp"
 #include "nova_renderer/util/result.hpp"
+#include "nova_renderer/util/utils.hpp"
 
 namespace nova::renderer {
     class filesystem_exception : public std::exception { // Convert fs::filesystem_error into a nova class

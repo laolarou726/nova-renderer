@@ -20,13 +20,13 @@ namespace nova::renderer {
         nova_error() = default;
 
         explicit nova_error(std::string message);
-        nova_error(nova_error &&other) noexcept;
+        nova_error(nova_error&& other) noexcept;
 
-        nova_error(std::string message, const nova_error &cause);
+        nova_error(std::string message, const nova_error& cause);
 
         [[nodiscard]] std::string to_string() const;
 
-        nova_error operator +(const nova_error &other) const;
+        nova_error operator+(const nova_error& other) const;
     };
 
     inline nova_error operator""_err(const char* str, std::size_t size) { return nova_error(std::string(str, size)); }
@@ -135,7 +135,7 @@ namespace nova::renderer {
         }
 
         template <typename NewValueType>
-        auto convert(const std::string &msg) -> result<NewValueType> {
+        auto convert(const std::string& msg) -> result<NewValueType> {
             if constexpr(std::is_convertible_v<ValueType, NewValueType>) {
                 if(has_value) {
                     return result<NewValueType>(static_cast<NewValueType>(value));
@@ -149,9 +149,7 @@ namespace nova::renderer {
             }
         }
 
-        explicit operator bool() const {
-            return has_value;
-        }
+        explicit operator bool() const { return has_value; }
 
         ValueType get() const {
             if(has_value) {
@@ -174,7 +172,7 @@ namespace nova::renderer {
         result(const result<void>& other) = delete;
         result<void>& operator=(const result<void>& other) = delete;
 
-        result(result<void>&& old) noexcept : error(std::move(old.error)) {};
+        result(result<void>&& old) noexcept : error(std::move(old.error)){};
 
         template <typename FuncType>
         auto map(FuncType&& func) -> result<decltype(func())> {
@@ -221,7 +219,7 @@ namespace nova::renderer {
         }
 
         template <typename NewValueType>
-        auto convert(const std::string &msg) -> result<NewValueType> {
+        auto convert(const std::string& msg) -> result<NewValueType> {
             if(!error) {
                 throw std::logic_error("Tried to convert void to some other type");
             } else {
@@ -229,9 +227,7 @@ namespace nova::renderer {
             }
         }
 
-        explicit operator bool() const {
-            return !error;
-        }
+        explicit operator bool() const { return !error; }
 
         void get() const {
             if(error) {
