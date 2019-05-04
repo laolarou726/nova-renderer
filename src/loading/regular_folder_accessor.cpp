@@ -17,8 +17,7 @@ namespace nova::renderer {
         }
 
         if(!does_resource_exist_on_filesystem(full_resource_path)) {
-            NOVA_LOG(DEBUG) << "Resource at path " << full_resource_path.string() << " does not exist";
-            return result<std::string>(MAKE_ERROR("Resource at path {:s} does not exist", full_resource_path.string()));
+            return MAKE_ERROR("Resource at path {:s} does not exist", full_resource_path.string());
         }
 
         // std::vector<uint8_t> buf;
@@ -28,8 +27,7 @@ namespace nova::renderer {
             const auto resource_string = full_resource_path.string();
 
             resource_existence.emplace(resource_string, false);
-            NOVA_LOG(DEBUG) << "Could not load resource at path " << resource_string;
-            return result<std::string>(MAKE_ERROR("Could not load resource at path {:s}", resource_string));
+            return MAKE_ERROR("Could not load resource at path {:s}", resource_string);
         }
 
         std::string buf;
@@ -59,10 +57,10 @@ namespace nova::renderer {
             }
         }
         catch(const fs::filesystem_error& error) {
-            return result<std::vector<fs::path>>(MAKE_ERROR("Error while collecting items in folder: {:s}", error.what()));
+            return MAKE_ERROR("Error while collecting items in folder: {:s}", error.what());
         }
 
-        return result(paths);
+        return paths;
     }
 
     bool regular_folder_accessor::does_resource_exist_on_filesystem(const fs::path& resource_path) {
@@ -70,16 +68,13 @@ namespace nova::renderer {
         const auto resource_string = resource_path.string();
         const auto existence_maybe = does_resource_exist_in_map(resource_string);
         if(existence_maybe) {
-            // NOVA_LOG(TRACE) << "Does " << resource_path << " exist? " << *existence_maybe;
             return *existence_maybe;
         }
 
         if(fs::exists(resource_path)) {
-            // NOVA_LOG(TRACE) << resource_path << " exists";
             resource_existence.emplace(resource_string, true);
             return true;
         }
-        // NOVA_LOG(TRACE) << resource_path << " does not exist";
         resource_existence.emplace(resource_string, false);
         return false;
     }

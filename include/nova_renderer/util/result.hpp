@@ -26,8 +26,6 @@ namespace nova::renderer {
         nova_error(std::string message, const nova_error& cause);
 
         [[nodiscard]] std::string to_string() const;
-
-        nova_error operator+(const nova_error& other) const;
     };
 
     inline nova_error operator""_err(const char* str, std::size_t size) { return nova_error(std::string(str, size)); }
@@ -146,7 +144,7 @@ namespace nova::renderer {
             if(has_value) {
                 throw std::logic_error("Tried to convert with non-convertible value type");
             } else {
-                return result<NewValueType>(nova_error(msg) + error);
+                return result<NewValueType>(nova_error(msg, error));
             }
         }
 
@@ -224,7 +222,7 @@ namespace nova::renderer {
             if(!error) {
                 throw std::logic_error("Tried to convert void to some other type");
             } else {
-                return result<NewValueType>(nova_error(msg) + *error);
+                return result<NewValueType>(nova_error(msg, *error));
             }
         }
 
