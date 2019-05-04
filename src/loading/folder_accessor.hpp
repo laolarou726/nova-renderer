@@ -11,19 +11,6 @@
 #include "nova_renderer/util/utils.hpp"
 
 namespace nova::renderer {
-    class filesystem_exception : public std::exception { // Convert fs::filesystem_error into a nova class
-    private:
-        const std::string message;
-        const std::error_code error_code;
-
-    public:
-        explicit filesystem_exception(const fs::filesystem_error& error) : message(error.what()), error_code(error.code()) {}
-
-        [[nodiscard]] const char* what() const noexcept override { return message.c_str(); }
-
-        [[nodiscard]] std::error_code code() const noexcept { return error_code; }
-    };
-
     /*!
      * \brief A collection of resources on the filsysstem
      *
