@@ -48,7 +48,7 @@ namespace nova::renderer {
         if(window_handle == nullptr) {
             const auto windows_error = get_last_windows_error();
             NOVA_LOG(FATAL) << "Could not create window: " << windows_error;
-            throw window_creation_error("Could not create window: " + windows_error);
+            throw std::runtime_error("Could not create window: " + windows_error);
         }
     }
 
@@ -70,7 +70,7 @@ namespace nova::renderer {
             const std::string windows_err = get_last_windows_error();
             logger::instance.log(FATAL) << "Could not register window class: " << windows_err;
 
-            throw window_creation_error("Could not register window class");
+            throw std::runtime_error("Could not register window class");
         }
     }
 
