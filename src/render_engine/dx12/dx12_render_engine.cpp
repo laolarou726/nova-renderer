@@ -60,7 +60,7 @@ namespace nova::renderer {
         HRESULT hr = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&dxgi_factory));
         if(FAILED(hr)) {
             NOVA_LOG(FATAL) << "Could not create DXGI Factory";
-            throw render_engine_initialization_exception("Could not create DXGI Factory");
+            throw std::runtime_error("Could not create DXGI Factory");
         }
         NOVA_LOG(TRACE) << "Device created";
 
@@ -93,7 +93,7 @@ namespace nova::renderer {
 
         if(!adapter_found) {
             NOVA_LOG(FATAL) << "Could not find a GPU that supports DX12";
-            throw render_engine_initialization_exception("Could not find a GPU that supports DX12");
+            throw std::runtime_error("Could not find a GPU that supports DX12");
         }
 
         NOVA_LOG(TRACE) << "Adapter found";
@@ -101,7 +101,7 @@ namespace nova::renderer {
         hr = D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device));
         if(FAILED(hr)) {
             NOVA_LOG(FATAL) << "Could not create Dx12 device";
-            throw render_engine_initialization_exception("Could not create Dx12 device");
+            throw std::runtime_error("Could not create Dx12 device");
         }
     }
 
@@ -111,14 +111,14 @@ namespace nova::renderer {
         HRESULT hr = device->CreateCommandQueue(&rtv_queue_desc, IID_PPV_ARGS(&direct_command_queue));
         if(FAILED(hr)) {
             NOVA_LOG(FATAL) << "Could not create main command queue";
-            throw render_engine_initialization_exception("Could not create main command queue");
+            throw std::runtime_error("Could not create main command queue");
         }
     }
 
     void dx12_render_engine::create_swapchain() {
         if(!window) {
             NOVA_LOG(FATAL) << "Cannot initialize the swapchain before the window!";
-            throw render_engine_initialization_exception("Cannot initialize the swapchain before the window");
+            throw std::runtime_error("Cannot initialize the swapchain before the window");
         }
 
         const auto& window_size = window->get_window_size();
@@ -155,7 +155,7 @@ namespace nova::renderer {
                 NOVA_LOG(INFO) << "Out of memory. Soz bro :/";
             }
 
-            throw render_engine_initialization_exception("Could not create swapchain");
+            throw std::runtime_error("Could not create swapchain");
         }
 
         swapchain_uncast->QueryInterface(IID_PPV_ARGS(&swapchain));
@@ -172,7 +172,7 @@ namespace nova::renderer {
         HRESULT hr = device->CreateDescriptorHeap(&rtv_heap_descriptor, IID_PPV_ARGS(&rtv_descriptor_heap));
         if(FAILED(hr)) {
             NOVA_LOG(FATAL) << "Could not create descriptor heap for the RTV";
-            throw render_engine_initialization_exception("Could not create descriptor head for the RTV");
+            throw std::runtime_error("Could not create descriptor head for the RTV");
         }
 
         rtv_descriptor_size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -184,7 +184,7 @@ namespace nova::renderer {
             hr = swapchain->GetBuffer(i, IID_PPV_ARGS(&rendertarget));
             if(FAILED(hr)) {
                 NOVA_LOG(FATAL) << "Could not create RTV for swapchain image " << i;
-                throw render_engine_initialization_exception("Could not create RTV for swapchain");
+                throw std::runtime_error("Could not create RTV for swapchain");
             }
 
             rendertargets.push_back(rendertarget);
@@ -259,14 +259,14 @@ namespace nova::renderer {
         HRESULT hr = device->CreateCommandAllocator(command_list_type, IID_PPV_ARGS(&allocator));
         if(FAILED(hr)) {
             NOVA_LOG(FATAL) << "Could not create command buffer";
-            throw render_engine_initialization_exception("Could not create command buffer");
+            throw std::runtime_error("Could not create command buffer");
         }
 
         ComPtr<ID3D12CommandList> list;
         hr = device->CreateCommandList(0, command_list_type, allocator.Get(), nullptr, IID_PPV_ARGS(&list));
         if(FAILED(hr)) {
             NOVA_LOG(ERROR) << "Could not create a command list of type " << (uint32_t) command_list_type;
-            throw render_engine_initialization_exception("Could not create command list");
+            throw std::runtime_error("Could not create command list");
         }
 
         ComPtr<ID3D12Fence> fence;
@@ -330,7 +330,7 @@ namespace nova::renderer {
                 frame_fences[i] = fence;
             } else {
                 NOVA_LOG(FATAL) << "Could not create fence for from index " << frame_index;
-                throw render_engine_initialization_exception("Could not create fence for from index " + std::to_string(frame_index));
+                throw std::runtime_error("Could not create fence for from index " + std::to_string(frame_index));
             }
         }
         NOVA_LOG(TRACE) << "Created full-frame fences";
@@ -743,7 +743,7 @@ namespace nova::renderer {
 
         const HRESULT hr = device->CreateGraphicsPipelineState(&pipeline_state_desc, IID_PPV_ARGS(&output.pso));
         if(FAILED(hr)) {
-            throw shader_compilation_failed("Could not create PSO");
+            throw std::runtime_error("Could not create PSO");
         }
 
         return output;
@@ -813,19 +813,19 @@ namespace nova::renderer {
             std::stringstream ss;
             ss << "Could not compile vertex shader for pipeline " << filename.string() << ": "
                << static_cast<char*>(shader_compile_errors->GetBufferPointer());
-            throw shader_compilation_failed(ss.str());
+            throw std::runtime_error(ss.str());
         }
 
         ComPtr<ID3D12ShaderReflection> shader_reflector;
         hr = D3DReflect(shader_blob->GetBufferPointer(), shader_blob->GetBufferSize(), IID_PPV_ARGS(&shader_reflector));
         if(FAILED(hr)) {
-            throw shader_reflection_failed("Could not create reflector, error code " + std::to_string(hr));
+            throw std::runtime_error("Could not create reflector, error code " + std::to_string(hr));
         }
 
         D3D12_SHADER_DESC shader_desc;
         hr = shader_reflector->GetDesc(&shader_desc);
         if(FAILED(hr)) {
-            throw shader_reflection_failed("Could not get shader description");
+            throw std::runtime_error("Could not get shader description");
         }
 
         std::unordered_map<std::string, D3D12_SHADER_INPUT_BIND_DESC> shader_inputs(shader_desc.BoundResources);
@@ -835,7 +835,7 @@ namespace nova::renderer {
             D3D12_SHADER_INPUT_BIND_DESC bind_desc;
             hr = shader_reflector->GetResourceBindingDesc(i, &bind_desc);
             if(FAILED(hr)) {
-                throw shader_reflection_failed("Could not get description for bind point " + std::to_string(i));
+                throw std::runtime_error("Could not get description for bind point " + std::to_string(i));
             }
 
             D3D12_DESCRIPTOR_RANGE_TYPE descriptor_type = {};
@@ -904,7 +904,7 @@ namespace nova::renderer {
         HRESULT hr = D3D12SerializeVersionedRootSignature(&versioned_sig, &compiled_root_sig, &root_sig_compile_error);
         if(FAILED(hr)) {
             const std::string root_sig_compile_error_str = static_cast<char*>(root_sig_compile_error->GetBufferPointer());
-            throw shader_compilation_failed("Could not compile root signature: " + root_sig_compile_error_str);
+            throw std::runtime_error("Could not compile root signature: " + root_sig_compile_error_str);
         }
 
         ComPtr<ID3D12RootSignature> root_sig;
@@ -913,7 +913,7 @@ namespace nova::renderer {
                                          compiled_root_sig->GetBufferSize(),
                                          IID_PPV_ARGS(&root_sig));
         if(FAILED(hr)) {
-            throw shader_compilation_failed("Could not create root signature");
+            throw std::runtime_error("Could not create root signature");
         }
 
         return root_sig;
