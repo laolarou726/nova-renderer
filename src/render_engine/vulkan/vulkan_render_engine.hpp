@@ -42,10 +42,6 @@ namespace nova::ttl {
 
 namespace nova::renderer {
 
-    NOVA_EXCEPTION(buffer_allocate_failed);
-    NOVA_EXCEPTION(shaderpack_loading_error);
-    NOVA_EXCEPTION(descriptor_pool_creation_failed);
-
     struct vk_queue {
         VkQueue queue = nullptr;
         uint32_t queue_idx{};

@@ -16,8 +16,6 @@
 #endif
 
 namespace nova::ttl {
-    NOVA_EXCEPTION(called_from_external_thread);
-
     class task_scheduler;
 
     using ArgumentExtractorType = std::function<void(task_scheduler*)>;

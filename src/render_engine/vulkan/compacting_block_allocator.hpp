@@ -18,9 +18,6 @@ namespace nova::ttl {
 } // namespace nova::ttl
 
 namespace nova::renderer {
-
-    NOVA_EXCEPTION(buffer_allocation_failed);
-
     /*!
      * \brief The memory allocator that Nova uses for mesh data
      *

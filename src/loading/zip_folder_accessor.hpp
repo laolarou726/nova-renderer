@@ -28,9 +28,9 @@ namespace nova::renderer {
 
         ~zip_folder_accessor() override;
 
-        std::string read_text_file(const fs::path& resource_path) override;
+        result<std::string> read_text_file(const fs::path& resource_path) override;
 
-        std::vector<fs::path> get_all_items_in_folder(const fs::path& folder) override;
+        result<std::vector<fs::path>> get_all_items_in_folder(const fs::path& folder) override;
 
     private:
         /*!
@@ -41,6 +41,8 @@ namespace nova::renderer {
         mz_zip_archive zip_archive = {};
 
         std::unique_ptr<file_tree_node> files = nullptr;
+
+        bool ok = false;
 
         void delete_file_tree(std::unique_ptr<file_tree_node>& node);
 

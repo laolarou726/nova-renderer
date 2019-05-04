@@ -11,9 +11,6 @@
 #include "window.hpp"
 
 namespace nova::renderer {
-    NOVA_EXCEPTION(render_engine_initialization_exception);
-    NOVA_EXCEPTION(render_engine_rendering_exception);
-
     /*!
      * \brief Abstract class for render backends
      *

@@ -8,10 +8,9 @@
 
 #include "nova_renderer/util/filesystem.hpp"
 #include "nova_renderer/util/utils.hpp"
+#include "nova_renderer/util/result.hpp"
 
 namespace nova::renderer {
-    NOVA_EXCEPTION(resource_not_found_exception);
-
     class filesystem_exception : public std::exception { // Convert fs::filesystem_error into a nova class
     private:
         const std::string message;
@@ -65,7 +64,7 @@ namespace nova::renderer {
          * \param resource_path The path to the resource to load, relative to this resourcepack's root
          * \return All the bytes in the loaded resource
          */
-        virtual std::string read_text_file(const fs::path& resource_path) = 0;
+        virtual result<std::string> read_text_file(const fs::path& resource_path) = 0;
 
         /*!
          * \brief Loads the file at the provided path as a series of 32-bit numbers
@@ -73,14 +72,14 @@ namespace nova::renderer {
          * \param resource_path The path to the SPIR-V file to load, relative to this resourcepack's root
          * \return All the 32-bit numbers in the SPIR-V file
          */
-        std::vector<uint32_t> read_spirv_file(fs::path& resource_path);
+        result<std::vector<uint32_t>> read_spirv_file(fs::path& resource_path);
 
         /*!
          * \brief Retrieves the paths of all the items in the specified folder
          * \param folder The folder to get all items from
          * \return A list of all the paths in the provided folder
          */
-        virtual std::vector<fs::path> get_all_items_in_folder(const fs::path& folder) = 0;
+        virtual result<std::vector<fs::path>> get_all_items_in_folder(const fs::path& folder) = 0;
 
         std::shared_ptr<fs::path> get_root() const;
 

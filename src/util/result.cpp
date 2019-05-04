@@ -6,9 +6,8 @@ namespace nova::renderer {
 
     nova_error::nova_error(std::string message) : message(std::move(message)) {}
 
-    nova_error::nova_error(std::string message, nova_error cause) : message(std::move(message)) {
-        this->cause = std::make_unique<nova_error>();
-        *this->cause = std::forward<nova_error>(cause);
+    nova_error::nova_error(std::string message, const nova_error &cause) : message(std::move(message)) {
+        this->cause = std::make_unique<nova_error>(cause.message);
     }
 
     std::string nova_error::to_string() const {
@@ -18,4 +17,9 @@ namespace nova::renderer {
             return message;
         }
     }
+
+    nova_error nova_error::operator+(const nova_error &other) const {
+        return nova_error(message, std::move(other));
+    }
+
 } // namespace nova::renderer

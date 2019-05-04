@@ -8,9 +8,6 @@
 #include "renderdoc_app.h"
 
 namespace nova::renderer {
-    NOVA_EXCEPTION(already_initialized_exception);
-    NOVA_EXCEPTION(uninitialized_exception);
-
     /*!
      * \brief Main class for Nova. Owns all of Nova's resources and provides a way to access them
      * This class exists as a singleton so it's always available
@@ -35,11 +32,13 @@ namespace nova::renderer {
          *
          * This method will first try to load from the `shaderpacks/` folder (mimicking Optifine shaders). If the
          * shaderpack isn't found there, it'll try to load it from the `resourcepacks/` directory (mimicking Bedrock
-         * shaders). If the shader can't be found at either place, a `nova::resource_not_found` exception will be thrown
+         * shaders).
+         *
+         * \returns `true` if successfully loaded, `false` otherwise
          *
          * \param shaderpack_name The name of the shaderpack to load
          */
-        void load_shaderpack(const std::string& shaderpack_name) const;
+        bool load_shaderpack(const std::string& shaderpack_name) const;
 
         /*!
          * \brief Executes a single frame

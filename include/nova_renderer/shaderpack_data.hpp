@@ -18,8 +18,6 @@
 #include "nova_renderer/util/utils.hpp"
 
 namespace nova::renderer {
-    NOVA_EXCEPTION(validation_failure_exception);
-
     /*!
      * \brief Controls the rasterizer's state
      */

@@ -231,7 +231,8 @@ namespace nova::renderer {
         }
 
         if(gpu.phys_device == nullptr) {
-            throw render_engine_initialization_exception("Failed to find good GPU");
+            NOVA_LOG(ERROR) << "Failed to find working GPU";
+            throw std::runtime_error("Failed to find good GPU");
         }
 
         vkGetPhysicalDeviceFeatures(gpu.phys_device, &gpu.supported_features);

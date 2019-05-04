@@ -7,7 +7,7 @@
 namespace nova::renderer {
     regular_folder_accessor::regular_folder_accessor(const fs::path& folder) : folder_accessor_base(folder) {}
 
-    std::string regular_folder_accessor::read_text_file(const fs::path& resource_path) {
+    result<std::string> regular_folder_accessor::read_text_file(const fs::path& resource_path) {
         std::lock_guard l(*resource_existence_mutex);
         fs::path full_resource_path;
         if(has_root(resource_path, *root_folder)) {
@@ -18,7 +18,7 @@ namespace nova::renderer {
 
         if(!does_resource_exist_on_filesystem(full_resource_path)) {
             NOVA_LOG(DEBUG) << "Resource at path " << full_resource_path.string() << " does not exist";
-            throw resource_not_found_exception(full_resource_path.string());
+            return result<std::string>(MAKE_ERROR("Resource at path {:s} does not exist", full_resource_path.string()));
         }
 
         // std::vector<uint8_t> buf;
@@ -29,7 +29,7 @@ namespace nova::renderer {
 
             resource_existence.emplace(resource_string, false);
             NOVA_LOG(DEBUG) << "Could not load resource at path " << resource_string;
-            throw resource_not_found_exception(resource_string);
+            return result<std::string>(MAKE_ERROR("Could not load resource at path {:s}", resource_string));
         }
 
         std::string buf;
@@ -45,10 +45,10 @@ namespace nova::renderer {
 
         // buf.push_back(0);
 
-        return file_string;
+        return result(file_string);
     }
 
-    std::vector<fs::path> regular_folder_accessor::get_all_items_in_folder(const fs::path& folder) {
+    result<std::vector<fs::path>> regular_folder_accessor::get_all_items_in_folder(const fs::path& folder) {
         const fs::path full_path = *root_folder / folder;
         std::vector<fs::path> paths = {};
 
@@ -59,10 +59,10 @@ namespace nova::renderer {
             }
         }
         catch(const fs::filesystem_error& error) {
-            throw filesystem_exception(error);
+            return result<std::vector<fs::path>>(MAKE_ERROR("Error while collecting items in folder: {:s}", error.what()));
         }
 
-        return paths;
+        return result(paths);
     }
 
     bool regular_folder_accessor::does_resource_exist_on_filesystem(const fs::path& resource_path) {

@@ -5,8 +5,6 @@
 #include "util/utils.hpp"
 
 namespace nova::renderer {
-    NOVA_EXCEPTION(window_creation_error);
-
     /*!
      * \brief A platform-independent window interface
      */

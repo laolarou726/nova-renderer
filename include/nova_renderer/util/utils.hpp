@@ -42,20 +42,5 @@ namespace nova::renderer {
 
     void write_to_file(const std::vector<uint32_t>& data, const fs::path& filepath);
 
-    class nova_exception : public std::exception {
-    private:
-        std::string msg;
-
-        std::string generate_msg(const std::string& msg, const std::optional<std::exception>& exception);
-
-    public:
-        nova_exception();
-        explicit nova_exception(const std::string& msg);
-
-        explicit nova_exception(const std::exception& cause);
-        nova_exception(const std::string& msg, const std::exception& cause);
-        [[nodiscard]] const char* what() const noexcept override;
-    };
-
 #define FORMAT(s, ...) fmt::format(fmt(s), __VA_ARGS__)
 } // namespace nova::renderer

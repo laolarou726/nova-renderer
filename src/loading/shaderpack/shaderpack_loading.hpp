@@ -5,18 +5,13 @@
 #include <nova_renderer/shaderpack_data.hpp>
 #include <nova_renderer/util/filesystem.hpp>
 
+#include "nova_renderer/util/result.hpp"
+
 namespace nova::ttl {
     class task_scheduler;
 } // namespace nova::ttl
 
 namespace nova::renderer {
-
-    NOVA_EXCEPTION(shader_compilation_failed);
-    NOVA_EXCEPTION(shader_reflection_failed);
-    NOVA_EXCEPTION(shader_layout_creation_failed);
-    NOVA_EXCEPTION(pipeline_load_failed);
-    NOVA_EXCEPTION(material_load_failed);
-
     /*!
      * \brief Loads all the data for a single shaderpack
      *
@@ -33,5 +28,5 @@ namespace nova::renderer {
      * \param task_scheduler The task scheduler to use when kicking off tasks to process all of the shaderpack data
      * \return The shaderpack, if it can be loaded, or an empty optional if it cannot
      */
-    shaderpack_data load_shaderpack_data(const fs::path& shaderpack_name);
+    result<shaderpack_data> load_shaderpack_data(const fs::path& shaderpack_name);
 } // namespace nova::renderer

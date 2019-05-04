@@ -13,7 +13,9 @@ namespace nova::renderer {
 
         if(mz_zip_reader_init_file(&zip_archive, folder_string.c_str(), 0) == 0) {
             NOVA_LOG(DEBUG) << "Could not open zip archive " << folder_string;
-            throw resource_not_found_exception(folder_string);
+            ok = false;
+        } else {
+            ok = true;
         }
 
         build_file_tree();
@@ -26,13 +28,13 @@ namespace nova::renderer {
 
     void zip_folder_accessor::delete_file_tree(std::unique_ptr<file_tree_node>& node) { node = nullptr; }
 
-    std::string zip_folder_accessor::read_text_file(const fs::path& resource_path) {
+    result<std::string> zip_folder_accessor::read_text_file(const fs::path& resource_path) {
         const fs::path full_path = *root_folder / resource_path;
 
         const std::string resource_string = full_path.string();
         if(!does_resource_exist_on_filesystem(full_path)) {
             NOVA_LOG(DEBUG) << "Resource at path " << resource_string << " does not exist";
-            throw resource_not_found_exception(resource_string);
+            return result<std::string>(MAKE_ERROR("Resource at path {:s} does not exist", resource_string));
         }
 
         const uint32_t file_idx = resource_indexes.at(resource_string);
@@ -44,7 +46,7 @@ namespace nova::renderer {
             const std::string err = mz_zip_get_error_string(err_code);
 
             NOVA_LOG(DEBUG) << "Could not get information for file " << resource_string << ": " << err;
-            throw resource_not_found_exception(resource_string);
+            return result<std::string>(MAKE_ERROR("Could not get information for file {:s}: {:s}", resource_string, err));
         }
 
         std::vector<char> resource_buffer;
@@ -60,13 +62,17 @@ namespace nova::renderer {
             const std::string err = mz_zip_get_error_string(err_code);
 
             NOVA_LOG(DEBUG) << "Could not extract file " << resource_string << ": " << err;
-            throw resource_not_found_exception(resource_string);
+            return result<std::string>(MAKE_ERROR("Could not extract file {:s}: {:s}", resource_string, err));
         }
 
-        return std::string{resource_buffer.data()};
+        return result(std::string{resource_buffer.data()});
     }
 
-    std::vector<fs::path> zip_folder_accessor::get_all_items_in_folder(const fs::path& folder) {
+    result<std::vector<fs::path>> zip_folder_accessor::get_all_items_in_folder(const fs::path& folder) {
+        if(!ok) {
+            return result<std::vector<fs::path>>("Can't get items in unloaded archive"_err);
+        }
+
         std::string folder_stringname = folder.string();
         std::vector<std::string> folder_path_parts = split(folder.string(), '/');
 
@@ -83,7 +89,7 @@ namespace nova::renderer {
             }
 
             if(!found_node) {
-                throw resource_not_found_exception(folder.string());
+                return result<std::vector<fs::path>>(MAKE_ERROR("Could not find node at {:s}", folder.string()));
             }
         }
 
@@ -94,10 +100,14 @@ namespace nova::renderer {
             children_paths.emplace_back(s);
         }
 
-        return children_paths;
+        return result(children_paths);
     }
 
     void zip_folder_accessor::build_file_tree() {
+        if(!ok) {
+            return;
+        }
+
         uint32_t num_files = mz_zip_reader_get_num_files(&zip_archive);
 
         std::vector<std::string> all_filenames;
@@ -144,6 +154,10 @@ namespace nova::renderer {
     }
 
     bool zip_folder_accessor::does_resource_exist_on_filesystem(const fs::path& resource_path) {
+        if(!ok) {
+            return false;
+        }
+
         const auto resource_string = resource_path.string();
         const auto existence_maybe = does_resource_exist_in_map(resource_string);
         if(existence_maybe) {

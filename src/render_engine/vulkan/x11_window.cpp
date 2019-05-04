@@ -8,7 +8,7 @@ namespace nova::renderer {
     x11_window::x11_window(uint32_t width, uint32_t height, const std::string& title) {
         display = XOpenDisplay(nullptr);
         if(display == nullptr) {
-            throw window_creation_error("Failed to open XDisplay");
+            throw std::runtime_error("Failed to open XDisplay");
         }
 
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-cstyle-cast)

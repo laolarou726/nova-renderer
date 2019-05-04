@@ -13,15 +13,15 @@ namespace nova::renderer {
         return does_resource_exist_on_filesystem(full_path);
     }
 
-    std::vector<uint32_t> folder_accessor_base::read_spirv_file(fs::path& resource_path) {
-        std::string buf = read_text_file(resource_path);
+    result<std::vector<uint32_t>> folder_accessor_base::read_spirv_file(fs::path& resource_path) {
+        return read_text_file(resource_path).map([](std::string buf) {
+            const uint32_t* buf_data = reinterpret_cast<uint32_t*>(buf.data());
+            std::vector<uint32_t> ret_val;
+            ret_val.reserve(buf.size() / 4);
+            ret_val.insert(ret_val.begin(), buf_data, buf_data + (buf.size() / 4));
 
-        const uint32_t* buf_data = reinterpret_cast<uint32_t*>(buf.data());
-        std::vector<uint32_t> ret_val;
-        ret_val.reserve(buf.size() / 4);
-        ret_val.insert(ret_val.begin(), buf_data, buf_data + (buf.size() / 4));
-
-        return ret_val;
+            return ret_val;
+        });
     }
 
     std::optional<bool> folder_accessor_base::does_resource_exist_in_map(const std::string& resource_string) const {
