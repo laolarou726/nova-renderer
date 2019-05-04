@@ -21,7 +21,9 @@ namespace nova::renderer {
 
         explicit nova_error(std::string message);
         nova_error(nova_error&& other) noexcept;
-        nova_error(const nova_error &other);
+
+        nova_error(const nova_error& other) = default;
+        nova_error& operator=(const nova_error& other) = default;
 
         nova_error(std::string message, const nova_error& cause);
 
