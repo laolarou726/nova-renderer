@@ -35,6 +35,8 @@
 #include <memory>
 #include <vector>
 
+#include "nova_renderer/util/attributes.hpp"
+
 constexpr static size_t CACHE_LINE_SIZE = 64;
 
 namespace nova::ttl {
@@ -71,7 +73,7 @@ namespace nova::ttl {
             std::unique_ptr<circular_array> previous;
 
         public:
-            [[nodiscard]] std::size_t size() const { return items.size(); }
+            NOVA_NODISCARD std::size_t size() const { return items.size(); }
 
             T get(std::size_t index) { return items[index & (size() - 1)]; }
 

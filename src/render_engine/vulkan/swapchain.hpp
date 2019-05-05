@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 
+#include "nova_renderer/util/attributes.hpp"
 #include "nova_renderer/util/utils.hpp"
 
 #include "vulkan.hpp"
@@ -43,14 +44,14 @@ namespace nova::renderer {
 
         VkImage get_current_image();
         VkImageLayout get_current_layout();
-        [[nodiscard]] VkExtent2D get_swapchain_extent() const;
-        [[nodiscard]] VkFormat get_swapchain_format() const;
+        NOVA_NODISCARD VkExtent2D get_swapchain_extent() const;
+        NOVA_NODISCARD VkFormat get_swapchain_format() const;
 
         // I've had a lot of bugs with RAII so here's an explicit cleanup method
         void deinit();
 
-        [[nodiscard]] uint32_t get_current_index() const;
-        [[nodiscard]] uint32_t get_num_images() const;
+        NOVA_NODISCARD uint32_t get_current_index() const;
+        NOVA_NODISCARD uint32_t get_num_images() const;
 
     private:
         vulkan_render_engine& render_engine;

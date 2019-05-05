@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "nova_renderer/shaderpack_data.hpp"
+#include "nova_renderer/util/attributes.hpp"
 
 namespace nova::renderer {
     struct range {
@@ -12,19 +13,19 @@ namespace nova::renderer {
         uint32_t first_read_pass = ~0U;
         uint32_t last_read_pass = 0;
 
-        [[nodiscard]] bool has_writer() const;
+        NOVA_NODISCARD bool has_writer() const;
 
-        [[nodiscard]] bool has_reader() const;
+        NOVA_NODISCARD bool has_reader() const;
 
-        [[nodiscard]] bool is_used() const;
+        NOVA_NODISCARD bool is_used() const;
 
-        [[nodiscard]] bool can_alias() const;
+        NOVA_NODISCARD bool can_alias() const;
 
-        [[nodiscard]] unsigned last_used_pass() const;
+        NOVA_NODISCARD unsigned last_used_pass() const;
 
-        [[nodiscard]] unsigned first_used_pass() const;
+        NOVA_NODISCARD unsigned first_used_pass() const;
 
-        [[nodiscard]] bool is_disjoint_with(const range& other) const;
+        NOVA_NODISCARD bool is_disjoint_with(const range& other) const;
     };
 
     /*!

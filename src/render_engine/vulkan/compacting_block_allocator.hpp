@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "nova_renderer/nova_settings.hpp"
+#include "nova_renderer/util/attributes.hpp"
 #include "nova_renderer/util/utils.hpp"
 
 #include "../../util/vma_usage.hpp"
@@ -83,7 +84,7 @@ namespace nova::renderer {
              */
             void free(allocation_info* alloc);
 
-            [[nodiscard]] VkBuffer get_buffer() const;
+            NOVA_NODISCARD VkBuffer get_buffer() const;
 
         private:
             // The pool is a simple linked list of allocated blocks.

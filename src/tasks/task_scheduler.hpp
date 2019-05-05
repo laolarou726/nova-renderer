@@ -210,7 +210,7 @@ namespace nova::ttl {
 
         friend void thread_func(task_scheduler* pool);
 
-        [[nodiscard]] uint32_t get_num_threads() const;
+        NOVA_NODISCARD uint32_t get_num_threads() const;
 
     private:
         uint32_t num_threads;

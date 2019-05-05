@@ -14,6 +14,7 @@
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 
+#include "nova_renderer/util/attributes.hpp"
 #include "nova_renderer/util/filesystem.hpp"
 #include "nova_renderer/util/result.hpp"
 #include "nova_renderer/util/utils.hpp"
@@ -377,7 +378,7 @@ namespace nova::renderer {
         /*!
          * \brief Merges this pipeline with the parent, returning the merged pipeline
          */
-        [[nodiscard]] pipeline_data merge_with_parent(const pipeline_data& parent_pipeline) const;
+        NOVA_NODISCARD pipeline_data merge_with_parent(const pipeline_data& parent_pipeline) const;
     };
 
     struct texture_format {
@@ -400,7 +401,7 @@ namespace nova::renderer {
          */
         float height;
 
-        [[nodiscard]] glm::uvec2 get_size_in_pixels(const glm::uvec2& screen_size) const;
+        NOVA_NODISCARD glm::uvec2 get_size_in_pixels(const glm::uvec2& screen_size) const;
 
         bool operator==(const texture_format& other) const;
         bool operator!=(const texture_format& other) const;

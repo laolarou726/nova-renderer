@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "nova_renderer/util/attributes.hpp"
+
 #include "../../util/vma_usage.hpp"
 
 namespace nova::renderer {
@@ -49,21 +51,21 @@ namespace nova::renderer {
          * \return A pointer to the buffer in host memory
          */
         template <typename UboStructType>
-        [[nodiscard]] UboStructType* get_data() {
+        NOVA_NODISCARD UboStructType* get_data() {
             return reinterpret_cast<UboStructType*>(cpu_alloc_info.pMappedData);
         }
 
-        [[nodiscard]] VmaAllocation& get_allocation();
+        NOVA_NODISCARD VmaAllocation& get_allocation();
 
-        [[nodiscard]] VmaAllocationInfo& get_allocation_info();
+        NOVA_NODISCARD VmaAllocationInfo& get_allocation_info();
 
-        [[nodiscard]] const std::string& get_name() const;
+        NOVA_NODISCARD const std::string& get_name() const;
 
-        [[nodiscard]] const VkBuffer& get_vk_buffer() const;
+        NOVA_NODISCARD const VkBuffer& get_vk_buffer() const;
 
-        [[nodiscard]] VkDeviceSize get_size() const;
+        NOVA_NODISCARD VkDeviceSize get_size() const;
 
-        [[nodiscard]] VkFence get_dummy_fence() const;
+        NOVA_NODISCARD VkFence get_dummy_fence() const;
 
         /*!
          * \brief Records a command to transfer the host buffer to the device buffer

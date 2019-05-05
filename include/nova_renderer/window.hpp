@@ -2,13 +2,14 @@
 
 #include <glm/glm.hpp>
 
+#include "nova_renderer/util/attributes.hpp"
 #include "util/utils.hpp"
 
 namespace nova::renderer {
     /*!
      * \brief A platform-independent window interface
      */
-    class iwindow {
+    class NOVA_INTERFACE iwindow {
     public:
         /*!
          * \brief Handles what should happen when the frame is done. This includes telling the operating system that
@@ -22,13 +23,13 @@ namespace nova::renderer {
          * While a fully native program can handle program shutdown entirely on its own, Nova needs a way for the game
          * it's running in to know if the user has requested window closing. This method is that way
          */
-        [[nodiscard]] virtual bool should_close() const = 0;
+        NOVA_NODISCARD virtual bool should_close() const = 0;
 
         /*!
          * \brief Gets the current window size
          *
          * \return The current size of the window
          */
-        [[nodiscard]] virtual glm::uvec2 get_window_size() const = 0;
+        NOVA_NODISCARD virtual glm::uvec2 get_window_size() const = 0;
     };
 } // namespace nova::renderer

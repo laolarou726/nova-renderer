@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include "nova_renderer/util/attributes.hpp"
+
 #include "nova_settings.hpp"
 #include "renderables.hpp"
 #include "shaderpack_data.hpp"
@@ -31,7 +33,7 @@ namespace nova::renderer {
          */
         virtual ~render_engine() = default;
 
-        [[nodiscard]] virtual std::shared_ptr<iwindow> get_window() const = 0;
+        NOVA_NODISCARD virtual std::shared_ptr<iwindow> get_window() const = 0;
 
         /*!
          * \brief Loads the specified shaderpack, building API-specific data structures

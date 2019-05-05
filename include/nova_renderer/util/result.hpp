@@ -6,6 +6,8 @@
 
 #include <fmt/format.h>
 
+#include "nova_renderer/util/attributes.hpp"
+
 #include "utils.hpp"
 
 namespace nova::renderer {
@@ -27,7 +29,7 @@ namespace nova::renderer {
 
         nova_error(std::string message, const nova_error& cause);
 
-        [[nodiscard]] std::string to_string() const;
+        NOVA_NODISCARD std::string to_string() const;
     };
 
     inline nova_error operator""_err(const char* str, std::size_t size) { return nova_error(std::string(str, size)); }

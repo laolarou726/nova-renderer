@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+#include "nova_renderer/util/attributes.hpp"
 #include "nova_renderer/util/result.hpp"
 
 #include "nova_settings.hpp"
@@ -49,7 +50,7 @@ namespace nova::renderer {
 
         nova_settings& get_settings();
 
-        [[nodiscard]] render_engine* get_engine() const;
+        NOVA_NODISCARD render_engine* get_engine() const;
 
         static nova_renderer* initialize(const nova_settings& settings);
 

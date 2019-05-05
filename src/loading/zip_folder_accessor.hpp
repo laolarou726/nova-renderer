@@ -2,6 +2,8 @@
 
 #include <miniz/miniz_zip.h>
 
+#include "nova_renderer/util/attributes.hpp"
+
 #include "folder_accessor.hpp"
 
 namespace nova::renderer {
@@ -10,7 +12,7 @@ namespace nova::renderer {
         std::vector<std::unique_ptr<file_tree_node>> children;
         file_tree_node* parent = nullptr;
 
-        [[nodiscard]] std::string get_full_path() const;
+        NOVA_NODISCARD std::string get_full_path() const;
     };
 
     /*!

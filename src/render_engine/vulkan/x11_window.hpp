@@ -6,6 +6,7 @@
 
 #include <X11/Xlib.h>
 
+#include "nova_renderer/util/attributes.hpp"
 #include "nova_renderer/window.hpp"
 
 namespace nova::renderer {
@@ -32,9 +33,9 @@ namespace nova::renderer {
         Display* get_display();
 
         void on_frame_end() override;
-        [[nodiscard]] bool should_close() const override;
+        NOVA_NODISCARD bool should_close() const override;
 
-        [[nodiscard]] glm::uvec2 get_window_size() const override;
+        NOVA_NODISCARD glm::uvec2 get_window_size() const override;
     };
 } // namespace nova::renderer
 
