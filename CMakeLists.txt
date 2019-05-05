@@ -344,8 +344,8 @@ if(WIN32)
     endforeach()
     
 else()
-    # GCC and Clang complain loudly about the #pragma region stuff. This shuts them up.
-    target_compile_options_if_supported(nova-renderer PRIVATE -Wno-unknown-pragmas)
+    # GCC and Clang complain loudly about the #pragma region stuff and unkown attributes. This shuts them up.
+    target_compile_options_if_supported(nova-renderer PRIVATE -Wno-unknown-pragmas -Wno-attributes)
     set(COMMON_LINK_LIBS ${COMMON_LINK_LIBS} stdc++fs X11)
 endif()
 

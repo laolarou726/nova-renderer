@@ -9,8 +9,8 @@
 #endif
 
 #ifndef NOVA_INTERFACE
-#ifndef SWIG
-#define NOVA_INTERFACE [[interface]]
+#if !defined(SWIG) || (defined(_MSC_VER) && _MSC_VER < 1911)
+#define NOVA_INTERFACE [[nova::interface]]
 #else
 #define NOVA_INTERFACE
 #endif
